@@ -1,4 +1,4 @@
-package j16.test;
+package j16.essai;
 
 public enum ClasseVoyageur {
     PREMIERE,

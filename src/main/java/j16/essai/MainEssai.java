@@ -1,8 +1,8 @@
-package j16.test;
+package j16.essai;
 
 import java.util.*;
 
-public class MainTest {
+public class MainEssai {
     public static void main(String[] args) {
         System.out.println("MainTest");
         String[] textes =new String[]{"Toto", "test 1", "test 2", "test 3", "autre texte"};
@@ -40,13 +40,16 @@ public class MainTest {
 
         //Collections.sort(Arrays.asList(pq.toArray()));
         System.out.println("Après tri Queue");
-        //Tab à 2 dimensions avec 2 listes
-        TabFromList tfl =new TabFromList();
-        tfl.addElementInFirstIndex("Test1");
-        tfl.addElementInFirstIndex("Test2");
-        tfl.addElementInFirstIndex("Test3");
 
-        //tfl.getElement()
+        //Tab à 2 dimensions avec 2 listes
+        System.out.println("Tab à 2 dimensions avec 2 listes");
+        TabFromList tfl =new TabFromList();
+        tfl.addElement("Test1", 0,0);
+        tfl.addElement("Test2",0,2);
+        tfl.addElement("Test3", 2,1);
+        tfl.addElement(new int[]{1,3,6,5}, 2,1);
+        System.out.println("Affichage de la liste de liste");
+        System.out.println(tfl);
 
         //Test Voyageur
         int cnt=0;
@@ -83,13 +86,6 @@ public class MainTest {
 
     public static void displayCollection(Collection<String> colToDisplay){
         for (String s : colToDisplay) {
-            System.out.print(s+", ");
-        }
-        System.out.println();
-    }
-
-    public static void displayList(List<String> listToDisplay){
-        for (String s : listToDisplay) {
             System.out.print(s+", ");
         }
         System.out.println();
