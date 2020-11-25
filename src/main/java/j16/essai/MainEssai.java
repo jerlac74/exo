@@ -50,6 +50,20 @@ public class MainEssai {
         tfl.addElement(new int[]{1,3,6,5}, 2,1);
         System.out.println("Affichage de la liste de liste");
         System.out.println(tfl);
+        TabFromList tfl2 =new TabFromList();
+        tfl2.addElement("Test1", 0,0);
+        tfl2.addElement("Test2",0,2);
+        tfl2.addElement("Test3", 2,1);
+        tfl2.setElement(new int[]{1,3,6,5}, 2,1);
+        System.out.println("Affichage de la liste de liste 2");
+        System.out.println(tfl2);
+        TabFromList tfl3 =new TabFromList();
+        tfl3.setElement("Test1", 0,0);
+        tfl3.setElement("Test2",0,2);
+        tfl3.setElement("Test3", 2,1);
+        tfl3.setElement(new int[]{1,3,6,5}, 2,1);
+        System.out.println("Affichage de la liste de liste 3");
+        System.out.println(tfl3);
 
         //Test Voyageur
         int cnt=0;

@@ -12,6 +12,30 @@ public class TabFromList {
     }
 
     void addElement(Object obj, int posUn, int posDeux) {
+        createFirstLevelIfNeeded(posUn);
+        //Crée le 2nd niveau
+        createSecondLevelIfNeeded(posUn, posDeux);
+        //ajoute l'élément
+        tabList.get(posUn).add(posDeux, obj);
+    }
+
+    void setElement(Object obj, int posUn, int posDeux) {
+        createFirstLevelIfNeeded(posUn);
+        //Crée le 2nd niveau
+        createSecondLevelIfNeeded(posUn, posDeux);
+        //ajoute l'élément
+        tabList.get(posUn).set(posDeux, obj);
+    }
+
+    private void createSecondLevelIfNeeded(int posUn, int posDeux) {
+        ArrayList<Object> al = tabList.get(posUn);
+        for (int i = 0; i <= posDeux; i++) {
+            if (al.size() < posDeux +1)
+                al.add(null);
+        }
+    }
+
+    private void createFirstLevelIfNeeded(int posUn) {
         if (posUn > indexCurrOne) {
             //Crée le 1er niveau
             indexCurrOne = posUn;
@@ -24,15 +48,6 @@ public class TabFromList {
                 }
             }
         }
-        //Crée le 2nd niveau
-        //TODO cela crée un niveau de trop
-        ArrayList<Object> al = tabList.get(posUn);
-        for (int i = 0; i <= posDeux; i++) {
-            if (al.size() <= posDeux)
-                al.add(null);
-        }
-        //ajoute l'élément
-        tabList.get(posUn).add(posDeux, obj);
     }
 
     Object getElement(int posUn, int posDeux) {
