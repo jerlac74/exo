@@ -15,7 +15,6 @@ public class Exo3 {
 
     public static int findIndexFarFromZero(int[] tabSrc) {
         int result = -1;
-        int tempResult = 0;
         int plusGrand=0;
         int indexFound=-1;
 
@@ -31,11 +30,6 @@ public class Exo3 {
                         if(tabSrc[indexFound]<0){
                             indexFound =i;
                         }
-                        /*else if(tabSrc[indexFound]>0){
-                            if(indexFound > i){
-                                indexFound =i;
-                            }
-                        }*/
                     }
                 }
             }
