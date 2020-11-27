@@ -53,6 +53,13 @@ public class AppNIO {
         //Exo5
         String[] resultMaxWords = findWordMaxCount(pathOccurrence);
         System.out.println(MessageFormat.format("Liste du ou des mots avec la plus grande occurrence [{0}] : {1} ", resultMaxWords[0], resultMaxWords[1]));
+
+        try {
+            Files.deleteIfExists(pathMyFile);
+            Files.deleteIfExists(pathOccurrence);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void appendLinesTotalInFile(Path path) {

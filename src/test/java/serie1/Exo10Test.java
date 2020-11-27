@@ -21,16 +21,15 @@ public class Exo10Test {
     @Test
     @DisplayName("vérifie la nombre Max")
     void exo10() {
-        //TODO
         String[] datas={"'1234',1", "'1234',2", "'1234',3", "'2020',1" };
 
         int[] resultats={234,34,4,202};
 
         int turn=0;
         Assertions.assertThat(Exo10.findNumberMax(datas[turn])).isEqualTo(resultats[turn++]);
-        //Assertions.assertThat(Exo10.findNumberMax(datas[turn])).isEqualTo(resultats[turn++]);
-        //Assertions.assertThat(Exo10.findNumberMax(datas[turn])).isEqualTo(resultats[turn++]);
-        //Assertions.assertThat(Exo10.findNumberMax(datas[turn])).isEqualTo(resultats[turn++]);
+        Assertions.assertThat(Exo10.findNumberMax(datas[turn])).isEqualTo(resultats[turn++]);
+        Assertions.assertThat(Exo10.findNumberMax(datas[turn])).isEqualTo(resultats[turn++]);
+        Assertions.assertThat(Exo10.findNumberMax(datas[turn])).isEqualTo(resultats[turn++]);
     }
 
 }

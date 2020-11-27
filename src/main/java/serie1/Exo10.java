@@ -13,7 +13,7 @@ public class Exo10 {
     '1234',3 = 4
     '2020',1 = 202
      */
-//TODO
+
     public static int findNumberMax(String inputData) {
         StringBuilder result = new StringBuilder();
         int max = 0;
@@ -29,7 +29,6 @@ public class Exo10 {
             if (nombreVirguleAMettre == 0)
                 return Integer.parseInt(texteSansQuotes);
 
-            //longueur texte - nombrevirgule = taille de la chaine que l'on peut prendre pour tester au max
             max = findRecurse(nombreVirguleAMettre, texteSansQuotes, max);
         }
         return max;
@@ -47,12 +46,11 @@ public class Exo10 {
         puis passer au suivant
          */
         int nombreVirguleCourant = nombreDeVirgule;
-        String result = "";
+
         for (int i = 0; i < data.length() - 1; i++) {
-            //result = firstChar + ",";
             nombreVirguleCourant--;
             if (nombreVirguleCourant > 0)
-                findRecurse(nombreDeVirgule, data.substring(1), max);
+                max =findRecurse(nombreVirguleCourant, data.substring(i+1), max);
             else {
                 String elt = data.substring(0, i + 1);
                 int nombreFirst = Integer.parseInt(elt);
@@ -62,6 +60,7 @@ public class Exo10 {
                 if (nombreRestant > max)
                     max = nombreRestant;
             }
+            nombreVirguleCourant =nombreDeVirgule;
         }
         return max;
     }
