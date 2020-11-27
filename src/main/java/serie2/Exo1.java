@@ -2,6 +2,8 @@ package serie2;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 
 public class Exo1 {
     /*
@@ -123,21 +125,40 @@ public class Exo1 {
         |X|X|X|X|
         Coup suivant -> Exception !
          */
+        //Trouver la position actuelle
+        //this.sizeBoard +1 nous donne le nombre de dames à trouver
+        int count=0;
+        HashMap<Integer, Integer> positionsDames = new HashMap<>();
+        for (int ligne = 0; ligne <= this.sizeBoard; ligne++) {
+            for (int col = 0; col <= this.sizeBoard; col++) {
+                if (this.board[ligne][col]) {
+                    positionsDames.put(ligne, col);
+                    count++;
+                    if(count==this.sizeBoard+1)
+                        break;
+                }
+            }
+            if(count==this.sizeBoard+1)
+                break;
+        }
+        //TODO
+        //déplacer selon la règle
+        
+        //
         for (int col = 0; col <= this.sizeBoard; col++) {
             for (int ligne = 0; ligne <= this.sizeBoard; ligne++) {
                 //si toute la ligne a une valeur
                 //on déplace la colonne la plus à gauche sur la ligne suivante si elle est libre
-                if(this.board[ligne][col]){
+                if (this.board[ligne][col]) {
                     //le déplacer sur la ligne suivante
-                    int ligneSuiv = ligne+1;
-                    if(ligneSuiv<=this.sizeBoard) {
+                    int ligneSuiv = ligne + 1;
+                    if (ligneSuiv <= this.sizeBoard) {
                         this.board[ligneSuiv][col] = true;
                         this.board[ligne][col] = false;
-                    }
-                    else{
-                        this.board[0][col]=true;
-                        this.board[0][col+1]=false;
-                        this.board[1][col]=true;
+                    } else {
+                        this.board[0][col] = true;
+                        this.board[0][col + 1] = false;
+                        this.board[1][col] = true;
                     }
                 }
             }
