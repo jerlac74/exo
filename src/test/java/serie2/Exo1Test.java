@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import serie1.Exo11;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Random;
 
 public class Exo1Test {
@@ -46,9 +47,9 @@ public class Exo1Test {
     }
 
     @Test
-    @DisplayName("vérifie que le clone du tableau est équivalent et a une adresse mémoire différente")
-    void checkCloneArray() {
-        Exo1 exo1 = new Exo1(3);
+    @DisplayName("vérifie que le clone d'un tableau vide est équivalent et a une adresse mémoire différente")
+    void checkCloneArrayEmpty() {
+        Exo1 exo1 = new Exo1(4);
         boolean[][] copyArray = exo1.cloneBoard();
         boolean[][] board = exo1.getBoard();
 
@@ -59,26 +60,47 @@ public class Exo1Test {
     }
 
     @Test
-    @DisplayName("vérifie que la création d'un tableau à partir d'un fourni, copie bien le contenu")
-    void checkCopyArray() {
-        int size = 3;
-        boolean[][] srcArray = new boolean[size][size];
-        for (int ligne = 0; ligne < srcArray.length; ligne++) {
-            for (int col = 0; col < srcArray.length; col++) {
-                srcArray[ligne][col] = (Math.random() <= 0.5);
+    @DisplayName("vérifie que le clone d'un tableau rempli est équivalent et a une adresse mémoire différente")
+    void checkCloneArrayFilled() {
+        int size = 4;
+        boolean[][] randomArray = new boolean[size][size];
+        for (int ligne = 0; ligne < randomArray.length; ligne++) {
+            for (int col = 0; col < randomArray.length; col++) {
+                randomArray[ligne][col] = (Math.random() <= 0.5);
             }
         }
-        Exo1 exo1 = new Exo1(srcArray);
+        Exo1 exo1 = new Exo1(randomArray);
+        boolean[][] copyArray = exo1.cloneBoard();
         boolean[][] board = exo1.getBoard();
 
-        Assertions.assertThat(board).isDeepEqualTo(srcArray);
-        System.out.println("srcArray:" + srcArray.toString());
+        Assertions.assertThat(copyArray).isDeepEqualTo(board);
+        System.out.println("copy:" + copyArray.toString());
         System.out.println("board:" + board.toString());
-        Assertions.assertThat(srcArray).isNotSameAs(board);
+        Assertions.assertThat(copyArray).isNotSameAs(board);
+        Assertions.assertThat(board).isDeepEqualTo(randomArray);
     }
 
     @Test
     @DisplayName("vérifie que la création d'un tableau à partir d'un fourni, copie bien le contenu")
+    void checkCopyArray() {
+        int size = 4;
+        boolean[][] randomArray = new boolean[size][size];
+        for (int ligne = 0; ligne < size; ligne++) {
+            for (int col = 0; col < size; col++) {
+                randomArray[ligne][col] = (Math.random() <= 0.5);
+            }
+        }
+        Exo1 exo1 = new Exo1(randomArray);
+        boolean[][] board = exo1.getBoard();
+
+        Assertions.assertThat(board).isDeepEqualTo(randomArray);
+        System.out.println("randomArray:" + randomArray.toString());
+        System.out.println("board:" + board.toString());
+        Assertions.assertThat(board).isNotSameAs(randomArray);
+    }
+
+    @Test
+    @DisplayName("vérifie l'affichage d'une grille pour un tableau donné")
     void checkAfficherGrille() {
         /*
         [[true, false, true, false],[false, true, false, false],[false, false, false, false],[false, false, false, true]]
@@ -267,7 +289,7 @@ public class Exo1Test {
     @DisplayName("parcours de tableau et qui vérifie les ligne/colonnes/diagonales-gauche/diagonales-droite des cases occupées.")
     void checkOnlyOneDameInAll() {
         /*
-        Ecrire une méthode qui parcours de tableau et qui vérifie les ligne/colonnes/diagonales-gauche/diagonales-droite des cases occupées.
+        Ecrire une méthode qui parcourt de tableau et qui vérifie les lignes/colonnes/diagonales-gauche/diagonales-droite des cases occupées.
          */
         /*
         Soit le plateau en entrée :
@@ -300,6 +322,21 @@ public class Exo1Test {
 
         /*
         Soit le plateau en entrée :
+        | |X|X|X|
+        |X| | | |
+        | | | | |
+        | | | | |
+        estUneSolution()-> false
+         */
+        srcArray[0] = new boolean[]{false, true, true, true};
+        srcArray[1] = new boolean[]{true, false, false, false};
+        srcArray[2] = new boolean[]{false, false, false, false};
+        srcArray[3] = new boolean[]{false, false, false, false};
+        Exo1 exo3 = new Exo1(srcArray);
+        Assertions.assertThat(exo3.estUneSolution()).isEqualTo(false);
+
+        /*
+        Soit le plateau en entrée :
         |X| |X|X|
         | |X| |X|
         |X| | | |
@@ -310,12 +347,12 @@ public class Exo1Test {
         srcArray[1] = new boolean[]{false, true, false, true};
         srcArray[2] = new boolean[]{true, false, false, false};
         srcArray[3] = new boolean[]{false, true, false, true};
-        Exo1 exo3 = new Exo1(srcArray);
-        Assertions.assertThat(exo3.estUneSolution()).isEqualTo(false);
+        Exo1 exo4 = new Exo1(srcArray);
+        Assertions.assertThat(exo4.estUneSolution()).isEqualTo(false);
     }
 
     @Test
-    @DisplayName("Vérification du prochain déplacement à la recherche d'une solution.")
+    @DisplayName("Vérification du prochain déplacement.")
     void checkNextMoveNaif() {
         /*
         Pour l'algorithme naïf, nous allons partir de la position suivante et nous allons itérer pour essayer la totalité des possibilités une à une.
@@ -345,6 +382,7 @@ public class Exo1Test {
         | | | | |
          */
         boolean[][] destArray= new boolean[4][];
+
         srcArray[0] = new boolean[]{true, true, true, true};
         srcArray[1] = new boolean[]{false, false, false, false};
         srcArray[2] = new boolean[]{false, false, false, false};
@@ -358,8 +396,8 @@ public class Exo1Test {
         destArray[1] = new boolean[]{true, false, false, false};
         destArray[2] = new boolean[]{false, false, false, false};
         destArray[3] = new boolean[]{false, false, false, false};
-        Exo1 exoDest1 = new Exo1(destArray);
-        Assertions.assertThat(exoSrc1.getBoard()).isDeepEqualTo(exoDest1.getBoard());
+
+        Assertions.assertThat(exoSrc1.getBoard()).isDeepEqualTo(destArray);
         Assertions.assertThat(exp1).isNull();
 
         /*
@@ -386,8 +424,8 @@ public class Exo1Test {
         destArray[1] = new boolean[]{false, true, false, false};
         destArray[2] = new boolean[]{false, false, false, false};
         destArray[3] = new boolean[]{false, false, false, false};
-        Exo1 exoDest2 = new Exo1(destArray);
-        Assertions.assertThat(exoSrc2.getBoard()).isDeepEqualTo(exoDest2.getBoard());
+
+        Assertions.assertThat(exoSrc2.getBoard()).isDeepEqualTo(destArray);
         Assertions.assertThat(exp2).isNull();
 
         /*
@@ -414,8 +452,8 @@ public class Exo1Test {
         destArray[1] = new boolean[]{false, false, false, false};
         destArray[2] = new boolean[]{false, false, true, true};
         destArray[3] = new boolean[]{false, false, false, false};
-        Exo1 exoDest3 = new Exo1(destArray);
-        Assertions.assertThat(exoSrc3.getBoard()).isDeepEqualTo(exoDest3.getBoard());
+
+        Assertions.assertThat(exoSrc3.getBoard()).isDeepEqualTo(destArray);
         Assertions.assertThat(exp3).isNull();
 
         /*
@@ -435,6 +473,140 @@ public class Exo1Test {
                 ()->{exoSrc4.nextMoveNaif();}
         );
 
-        Assertions.assertThat(exp4).isNotNull();
+        Assertions.assertThat(exp4).isNotNull().isInstanceOf(JeuDamesException.class);
+    }
+
+    @Test
+    @DisplayName("Cherche les solutions au problème pour 4 Dames sans initialisation donnée")
+    void findSolutionsFor4StartEmpty() {
+        long start = System.currentTimeMillis();
+
+        Exo1 exoSrc1 = new Exo1(4);
+        LinkedList<boolean[][]> resultList = exoSrc1.findSolutions();
+
+        //fermer le timer et afficher le résultat
+        long end = System.currentTimeMillis();
+        System.out.println("findSolutionsFor4StartEmpty: Durée en millisecondes:" + (end - start));
+
+        Assertions.assertThat(resultList).hasSize(2);
+
+        //Afficher les solutions
+        for (boolean[][] tab : resultList) {
+            exoSrc1 =new Exo1(tab);
+            System.out.println(exoSrc1.toString());
+        }
+    }
+    @Test
+    @DisplayName("Cherche les solutions au problème pour 4 Dames posées sur la 1ère ligne")
+    void findSolutionsFor4StartFilledFirstRow() {
+        long start = System.currentTimeMillis();
+
+        boolean[][] destArray= new boolean[4][];
+        srcArray[0] = new boolean[]{true, true, true, true};
+        srcArray[1] = new boolean[]{false, false, false, false};
+        srcArray[2] = new boolean[]{false, false, false, false};
+        srcArray[3] = new boolean[]{false, false, false, false};
+        Exo1 exoSrc1 = new Exo1(srcArray);
+        LinkedList<boolean[][]> resultList = exoSrc1.findSolutions();
+
+        //fermer le timer et afficher le résultat
+        long end = System.currentTimeMillis();
+        System.out.println("findSolutionsFor4StartFilledFirstRow: Durée en millisecondes:" + (end - start));
+
+        Assertions.assertThat(resultList).hasSize(2);
+
+        //Afficher les solutions
+        for (boolean[][] tab : resultList) {
+            exoSrc1 =new Exo1(tab);
+            System.out.println(exoSrc1.toString());
+        }
+    }
+
+    @Test
+    @DisplayName("Cherche les solutions au problème pour 4 Dames dont la position est donnée pour le départ")
+    void findSolutionsFor4StartFilled() {
+        long start = System.currentTimeMillis();
+
+        boolean[][] destArray= new boolean[4][];
+        srcArray[0] = new boolean[]{false, false, false, true};
+        srcArray[1] = new boolean[]{false, false, true, false};
+        srcArray[2] = new boolean[]{false, true, false, false};
+        srcArray[3] = new boolean[]{true, false, false, false};
+        Exo1 exoSrc1 = new Exo1(srcArray);
+        LinkedList<boolean[][]> resultList = exoSrc1.findSolutions();
+
+        //fermer le timer et afficher le résultat
+        long end = System.currentTimeMillis();
+        System.out.println("findSolutionsFor4StartFilled: Durée en millisecondes:" + (end - start));
+
+        Assertions.assertThat(resultList).hasSize(2);
+
+        //Afficher les solutions
+        for (boolean[][] tab : resultList) {
+            exoSrc1 =new Exo1(tab);
+            System.out.println(exoSrc1.toString());
+        }
+    }
+
+    @Test
+    @DisplayName("Cherche les solutions au problème pour 8 Dames sans position donnée")
+    void findSolutionsFor8StartEmpty() {
+        long start = System.currentTimeMillis();
+
+        Exo1 exoSrc1 = new Exo1(8);
+        LinkedList<boolean[][]> resultList = exoSrc1.findSolutions();
+
+        //fermer le timer et afficher le résultat
+        long end = System.currentTimeMillis();
+        System.out.println("findSolutionsFor8StartEmpty: Durée en millisecondes:" + (end - start));
+
+        Assertions.assertThat(resultList).hasSize(92);
+    }
+    @Test
+    @DisplayName("Cherche les solutions au problème pour 8 Dames avec les dames en 1ère ligne")
+    void findSolutionsFor8StartFilledFirstRow() {
+        long start = System.currentTimeMillis();
+
+        boolean[][] array8= new boolean[8][];
+        array8[0] = new boolean[]{true, true, true, true, true, true, true, true};
+        array8[1] = new boolean[]{false, false, false, false, false, false, false, false};
+        array8[2] = new boolean[]{false, false, false, false, false, false, false, false};
+        array8[3] = new boolean[]{false, false, false, false, false, false, false, false};
+        array8[4] = new boolean[]{false, false, false, false, false, false, false, false};
+        array8[5] = new boolean[]{false, false, false, false, false, false, false, false};
+        array8[6] = new boolean[]{false, false, false, false, false, false, false, false};
+        array8[7] = new boolean[]{false, false, false, false, false, false, false, false};
+        Exo1 exoSrc1 = new Exo1(array8);
+        LinkedList<boolean[][]> resultList = exoSrc1.findSolutions();
+
+        //fermer le timer et afficher le résultat
+        long end = System.currentTimeMillis();
+        System.out.println("findSolutionsFor8StartFilledFirstRow: Durée en millisecondes:" + (end - start));
+
+        Assertions.assertThat(resultList).hasSize(92);
+    }
+
+    @Test
+    @DisplayName("Cherche les solutions au problème pour 8 Dames avec des positions données.")
+    void findSolutionsFor8StartFilled() {
+        long start = System.currentTimeMillis();
+
+        boolean[][] array8= new boolean[8][];
+        array8[0] = new boolean[]{false, false, false, false, false, false, false, true};
+        array8[1] = new boolean[]{false, false, false, false, false, false, true, false};
+        array8[2] = new boolean[]{false, false, false, false, false, true, false, false};
+        array8[3] = new boolean[]{false, false, false, false, true, false, false, false};
+        array8[4] = new boolean[]{false, false, false, true, false, false, false, false};
+        array8[5] = new boolean[]{false, false, true, false, false, false, false, false};
+        array8[6] = new boolean[]{false, true, false, false, false, false, false, false};
+        array8[7] = new boolean[]{true, false, false, false, false, false, false, false};
+        Exo1 exoSrc1 = new Exo1(array8);
+        LinkedList<boolean[][]> resultList = exoSrc1.findSolutions();
+
+        //fermer le timer et afficher le résultat
+        long end = System.currentTimeMillis();
+        System.out.println("findSolutionsFor8StartFilled: Durée en millisecondes:" + (end - start));
+
+        Assertions.assertThat(resultList).hasSize(92);
     }
 }

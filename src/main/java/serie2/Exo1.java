@@ -1,31 +1,29 @@
 package serie2;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 public class Exo1 {
     /*
     Jeu des 8 dames
      */
 
-    private int sizeBoard;
-    private boolean[][] board;
-    private Output output;
+    private final int sizeBoard;
+    private final boolean[][] board;
     private HashMap<Integer, Integer> positionsDames;
 
     public Exo1(int sizeBoard) {
         this.sizeBoard = sizeBoard;
         this.board = new boolean[this.sizeBoard][this.sizeBoard];
-        this.output = new ScreenOutput();
+
+        //On initialise avec les dames en 1ère ligne
+        initArrayIfEmpty();
     }
 
     public Exo1(boolean[][] board) {
-        this.board = new boolean[board.length][board.length];
-        this.sizeBoard = board.length - 1;
-        copyBoardValues(board);
-        this.output = new ScreenOutput();
+        this.sizeBoard = board.length;
+        this.board = new boolean[this.sizeBoard][this.sizeBoard];
+
+        copyBoardValues(board, this.board);
     }
 
     public boolean[][] getBoard() {
@@ -35,10 +33,7 @@ public class Exo1 {
     public boolean[][] cloneBoard() {
         boolean[][] copy = new boolean[this.sizeBoard][this.sizeBoard];
 
-        int lengthBoard = board.length;
-        for (int ligne = 0; ligne < lengthBoard; ligne++) {
-            System.arraycopy(board[ligne], 0, copy[ligne], 0, lengthBoard);
-        }
+        copyBoardValues(board, copy);
 
         return copy;
     }
@@ -56,7 +51,8 @@ public class Exo1 {
         verifierColonne indice de 0 à tabLength
         verifierLigne indice de 0 à tabLength
          */
-        int lengthTab = this.sizeBoard;
+        int lengthTab = this.sizeBoard - 1;
+
         for (int i = -lengthTab; i <= lengthTab; i++) {
             if (!verifierDiagonaleDroite(i))
                 return false;
@@ -75,7 +71,28 @@ public class Exo1 {
         return true;
     }
 
-    public void nextMoveNaif() throws Exception {
+    public LinkedList<boolean[][]> findSolutions() {
+        /*
+        Regarder si votre plateau est une solution au problème (pas deux dames sur la même ligne, colonne, diagonale gauche ou diagonale droite).
+        Si c'est cohérent, stocker une copie de cette solution dans une liste
+        Passer à la possibilité suivante
+         */
+        LinkedList<boolean[][]> resultListe = new LinkedList<>();
+
+        try {
+            while (true) {
+                nextMoveNaif();
+                if (estUneSolution()) {
+                    resultListe.add(cloneBoard());
+                }
+            }
+        } catch (JeuDamesException exp) {
+            //Fin du parcours
+        }
+        return resultListe;
+    }
+
+    public void nextMoveNaif() throws JeuDamesException {
         /*
         Pour l'algorithme naïf, nous allons partir de la position suivante et nous allons itérer pour essayer la totalité des possibilités une à une.
 
@@ -133,9 +150,9 @@ public class Exo1 {
         int lignePos;
         int previousCol;
         boolean hasMove = false;
-        for (int col = 0; col <= this.sizeBoard; col++) {
+        for (int col = 0; col < this.sizeBoard; col++) {
             lignePos = positionsDames.get(col);
-            if (lignePos < this.sizeBoard) {
+            if (lignePos < this.sizeBoard - 1) {
                 //on n'est pas sur la dernière ligne alors on peut décaler d'un en-dessous
                 this.board[lignePos + 1][col] = true;
                 this.board[lignePos][col] = false;
@@ -146,7 +163,7 @@ public class Exo1 {
                     while (previousCol >= 0) {
                         //on remonte le précédent
                         this.board[0][previousCol] = true;
-                        this.board[this.sizeBoard][previousCol] = false;
+                        this.board[this.sizeBoard - 1][previousCol] = false;
                         positionsDames.replace(previousCol, 0);
                         previousCol--;
                     }
@@ -156,37 +173,9 @@ public class Exo1 {
             //si on n'a pas fait de mouvement alors c'était que la dame de la colonne était sur la dernière ligne,
             // on va chercher à déplacer le suivant via la boucle for
         }
-        if (hasMove == false) {
+        if (!hasMove) {
             //il n'y a pas eu de mouvement => on propage un exception
-            throw new Exception("il n'y a plus de mouvements possible !");
-        }
-    }
-
-    private void findDamesPositions() {
-        /*
-        Sert à conserver la position actuelle des dames du tableau.
-        Ces positions seront utilisées pour déterminer les prochains mouvements.
-        this.positionsDames contient les dames via leur position avec key=colonne, value=ligne
-         */
-
-        //this.sizeBoard +1 nous donne le nombre de dames à trouver
-        int count = 0;
-
-        if (this.positionsDames == null) {
-            this.positionsDames = new HashMap<>();
-
-            for (int ligne = 0; ligne <= this.sizeBoard; ligne++) {
-                for (int col = 0; col <= this.sizeBoard; col++) {
-                    if (this.board[ligne][col]) {
-                        positionsDames.put(col, ligne);
-                        count++;
-                        if (count == this.sizeBoard + 1)
-                            break;
-                    }
-                }
-                if (count == this.sizeBoard + 1)
-                    break;
-            }
+            throw new JeuDamesException("il n'y a plus de mouvements possible !");
         }
     }
 
@@ -205,14 +194,14 @@ public class Exo1 {
          */
         int countDame = 0;
 
-        if (Math.abs(indiceDiag) <= this.sizeBoard) {
+        if (Math.abs(indiceDiag) < this.sizeBoard) {
 
             int turn = 0;
             int indexI, indexJ;
             int absIndiceDiag = Math.abs(indiceDiag);
             int loop = absIndiceDiag + turn;
 
-            while (loop <= this.sizeBoard) {
+            while (loop < this.sizeBoard) {
                 if (indiceDiag >= 0) {
                     indexI = turn;
                     indexJ = loop;
@@ -249,11 +238,11 @@ public class Exo1 {
          */
         int countDame = 0;
 
-        if (indiceDiag <= (this.sizeBoard * 2)) {
+        if (indiceDiag <= ((this.sizeBoard - 1) * 2)) {
             int turn = 0;
 
-            for (int i = 0; i <= this.sizeBoard; i++) {
-                for (int j = 0; j <= this.sizeBoard; j++) {
+            for (int i = 0; i < this.sizeBoard; i++) {
+                for (int j = 0; j < this.sizeBoard; j++) {
                     turn = i + j;
                     if (turn == indiceDiag) {
                         if (this.board[i][j])
@@ -277,7 +266,7 @@ public class Exo1 {
         int countDame = 0;
 
         if (indiceColonne >= 0) {
-            for (int ligne = 0; ligne <= this.sizeBoard; ligne++) {
+            for (int ligne = 0; ligne < this.sizeBoard; ligne++) {
                 if (this.board[ligne][indiceColonne])
                     countDame++;
             }
@@ -293,13 +282,15 @@ public class Exo1 {
         int countDame = 0;
 
         if (indiceLigne >= 0) {
-            for (int col = 0; col <= this.sizeBoard; col++) {
+            for (int col = 0; col < this.sizeBoard; col++) {
                 if (this.board[indiceLigne][col])
                     countDame++;
             }
         }
         return (countDame <= 1);
     }
+
+    //[Private Methods]
 
     private String afficherGrille() {
         /*la 1ère colonne et la 1ère ligne seront les indices à afficher
@@ -313,8 +304,8 @@ public class Exo1 {
 
         StringBuilder result = new StringBuilder();
         char toDisplay = ' ';
-        for (int indLigne = -1; indLigne <= this.sizeBoard; indLigne++) {
-            for (int indCol = -1; indCol <= this.sizeBoard; indCol++) {
+        for (int indLigne = -1; indLigne < this.sizeBoard; indLigne++) {
+            for (int indCol = -1; indCol < this.sizeBoard; indCol++) {
                 if (indLigne == -1)
                     if (indCol != -1)
                         result.append(" " + indCol);
@@ -330,12 +321,54 @@ public class Exo1 {
         return result.toString();
     }
 
-    private void copyBoardValues(boolean[][] boardToCopy) {
-        int lengthBoard = boardToCopy.length;
+    private void copyBoardValues(boolean[][] boardSrc, boolean[][] boardDest) {
+        int lengthBoard = boardSrc.length;
 
         for (int ligne = 0; ligne < lengthBoard; ligne++) {
-            System.arraycopy(boardToCopy[ligne], 0, board[ligne], 0, lengthBoard);
+            System.arraycopy(boardSrc[ligne], 0, boardDest[ligne], 0, lengthBoard);
         }
     }
 
+    private void findDamesPositions() {
+        /*
+        Sert à conserver la position actuelle des dames du tableau.
+        Ces positions seront utilisées pour déterminer les prochains mouvements.
+        this.positionsDames contient les dames via leur position avec key=colonne, value=ligne
+         */
+
+        //this.sizeBoard nous donne le nombre de dames à trouver
+        int count = 0;
+
+        if (this.positionsDames == null) {
+            this.positionsDames = new HashMap<>();
+        }
+
+        if (this.positionsDames.size() == 0) {
+            for (int ligne = 0; ligne < this.sizeBoard; ligne++) {
+                for (int col = 0; col < this.sizeBoard; col++) {
+                    if (this.board[ligne][col]) {
+                        positionsDames.put(col, ligne);
+                        count++;
+                        if (count == this.sizeBoard)
+                            break;
+                    }
+                }
+                if (count == this.sizeBoard)
+                    break;
+            }
+        }
+    }
+
+    private void initArrayIfEmpty() {
+        /*
+        //On initialise avec les dames en 1ère ligne si le tableau est vide
+         */
+        findDamesPositions();
+        if (this.positionsDames.size() == 0) {
+            //Aucune dame n'a été positionné dans le tableau
+            for (int i = 0; i < this.sizeBoard; i++) {
+                this.board[0][i] = true;
+            }
+        }
+    }
 }
