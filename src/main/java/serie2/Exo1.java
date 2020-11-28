@@ -13,6 +13,7 @@ public class Exo1 {
     private int sizeBoard;
     private boolean[][] board;
     private Output output;
+    private HashMap<Integer, Integer> positionsDames;
 
     public Exo1(int sizeBoard) {
         this.sizeBoard = sizeBoard;
@@ -74,7 +75,7 @@ public class Exo1 {
         return true;
     }
 
-    public void nextMoveNaif() {
+    public void nextMoveNaif() throws Exception {
         /*
         Pour l'algorithme naïf, nous allons partir de la position suivante et nous allons itérer pour essayer la totalité des possibilités une à une.
 
@@ -125,42 +126,66 @@ public class Exo1 {
         |X|X|X|X|
         Coup suivant -> Exception !
          */
-        //Trouver la position actuelle
-        //this.sizeBoard +1 nous donne le nombre de dames à trouver
-        int count=0;
-        HashMap<Integer, Integer> positionsDames = new HashMap<>();
-        for (int ligne = 0; ligne <= this.sizeBoard; ligne++) {
-            for (int col = 0; col <= this.sizeBoard; col++) {
-                if (this.board[ligne][col]) {
-                    positionsDames.put(ligne, col);
-                    count++;
-                    if(count==this.sizeBoard+1)
-                        break;
-                }
-            }
-            if(count==this.sizeBoard+1)
-                break;
-        }
-        //TODO
+        findDamesPositions();
+
         //déplacer selon la règle
-        
-        //
+        //commencer par déplacer la dame la plus à gauche d'une ligne vers le bas si possible
+        int lignePos;
+        int previousCol;
+        boolean hasMove = false;
         for (int col = 0; col <= this.sizeBoard; col++) {
-            for (int ligne = 0; ligne <= this.sizeBoard; ligne++) {
-                //si toute la ligne a une valeur
-                //on déplace la colonne la plus à gauche sur la ligne suivante si elle est libre
-                if (this.board[ligne][col]) {
-                    //le déplacer sur la ligne suivante
-                    int ligneSuiv = ligne + 1;
-                    if (ligneSuiv <= this.sizeBoard) {
-                        this.board[ligneSuiv][col] = true;
-                        this.board[ligne][col] = false;
-                    } else {
-                        this.board[0][col] = true;
-                        this.board[0][col + 1] = false;
-                        this.board[1][col] = true;
+            lignePos = positionsDames.get(col);
+            if (lignePos < this.sizeBoard) {
+                //on n'est pas sur la dernière ligne alors on peut décaler d'un en-dessous
+                this.board[lignePos + 1][col] = true;
+                this.board[lignePos][col] = false;
+                positionsDames.replace(col, lignePos + 1);
+                hasMove = true;
+                if (col != 0) {
+                    previousCol = col - 1;
+                    while (previousCol >= 0) {
+                        //on remonte le précédent
+                        this.board[0][previousCol] = true;
+                        this.board[this.sizeBoard][previousCol] = false;
+                        positionsDames.replace(previousCol, 0);
+                        previousCol--;
                     }
                 }
+                break;
+            }
+            //si on n'a pas fait de mouvement alors c'était que la dame de la colonne était sur la dernière ligne,
+            // on va chercher à déplacer le suivant via la boucle for
+        }
+        if (hasMove == false) {
+            //il n'y a pas eu de mouvement => on propage un exception
+            throw new Exception("il n'y a plus de mouvements possible !");
+        }
+    }
+
+    private void findDamesPositions() {
+        /*
+        Sert à conserver la position actuelle des dames du tableau.
+        Ces positions seront utilisées pour déterminer les prochains mouvements.
+        this.positionsDames contient les dames via leur position avec key=colonne, value=ligne
+         */
+
+        //this.sizeBoard +1 nous donne le nombre de dames à trouver
+        int count = 0;
+
+        if (this.positionsDames == null) {
+            this.positionsDames = new HashMap<>();
+
+            for (int ligne = 0; ligne <= this.sizeBoard; ligne++) {
+                for (int col = 0; col <= this.sizeBoard; col++) {
+                    if (this.board[ligne][col]) {
+                        positionsDames.put(col, ligne);
+                        count++;
+                        if (count == this.sizeBoard + 1)
+                            break;
+                    }
+                }
+                if (count == this.sizeBoard + 1)
+                    break;
             }
         }
     }

@@ -344,19 +344,23 @@ public class Exo1Test {
         | | | | |
         | | | | |
          */
-        boolean[][] destArray= new boolean[3][];
+        boolean[][] destArray= new boolean[4][];
         srcArray[0] = new boolean[]{true, true, true, true};
         srcArray[1] = new boolean[]{false, false, false, false};
         srcArray[2] = new boolean[]{false, false, false, false};
         srcArray[3] = new boolean[]{false, false, false, false};
         Exo1 exoSrc1 = new Exo1(srcArray);
-        exoSrc1.nextMoveNaif();
+        Throwable exp1 = Assertions.catchThrowable(
+                ()->{exoSrc1.nextMoveNaif();}
+        );
+
         destArray[0] = new boolean[]{false, true, true, true};
         destArray[1] = new boolean[]{true, false, false, false};
         destArray[2] = new boolean[]{false, false, false, false};
         destArray[3] = new boolean[]{false, false, false, false};
         Exo1 exoDest1 = new Exo1(destArray);
         Assertions.assertThat(exoSrc1.getBoard()).isDeepEqualTo(exoDest1.getBoard());
+        Assertions.assertThat(exp1).isNull();
 
         /*
         Exemple 2 :
@@ -375,13 +379,16 @@ public class Exo1Test {
         srcArray[2] = new boolean[]{false, false, false, false};
         srcArray[3] = new boolean[]{true, false, false, false};
         Exo1 exoSrc2 = new Exo1(srcArray);
-        exoSrc2.nextMoveNaif();
+        Throwable exp2 = Assertions.catchThrowable(
+                ()->{exoSrc2.nextMoveNaif();}
+        );
         destArray[0] = new boolean[]{true, false, true, true};
         destArray[1] = new boolean[]{false, true, false, false};
         destArray[2] = new boolean[]{false, false, false, false};
         destArray[3] = new boolean[]{false, false, false, false};
         Exo1 exoDest2 = new Exo1(destArray);
         Assertions.assertThat(exoSrc2.getBoard()).isDeepEqualTo(exoDest2.getBoard());
+        Assertions.assertThat(exp2).isNull();
 
         /*
         Exemple 3 :
@@ -400,13 +407,16 @@ public class Exo1Test {
         srcArray[2] = new boolean[]{false, false, false, true};
         srcArray[3] = new boolean[]{true, true, false, false};
         Exo1 exoSrc3= new Exo1(srcArray);
-        exoSrc3.nextMoveNaif();
+        Throwable exp3 = Assertions.catchThrowable(
+                ()->{exoSrc3.nextMoveNaif();}
+        );
         destArray[0] = new boolean[]{true, true, false, false};
         destArray[1] = new boolean[]{false, false, false, false};
         destArray[2] = new boolean[]{false, false, true, true};
         destArray[3] = new boolean[]{false, false, false, false};
         Exo1 exoDest3 = new Exo1(destArray);
         Assertions.assertThat(exoSrc3.getBoard()).isDeepEqualTo(exoDest3.getBoard());
+        Assertions.assertThat(exp3).isNull();
 
         /*
         Exemple 4 :
@@ -421,10 +431,10 @@ public class Exo1Test {
         srcArray[2] = new boolean[]{false, false, false, false};
         srcArray[3] = new boolean[]{true, true, true, true};
         Exo1 exoSrc4= new Exo1(srcArray);
-        Throwable exp = Assertions.catchThrowable(
+        Throwable exp4= Assertions.catchThrowable(
                 ()->{exoSrc4.nextMoveNaif();}
         );
 
-        Assertions.assertThat(exp).isNotNull();
+        Assertions.assertThat(exp4).isNotNull();
     }
 }
